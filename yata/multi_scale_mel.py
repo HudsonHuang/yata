@@ -33,6 +33,33 @@ class MultiScaleMel(nn.Module):
 
 
 
+class SpectrogramDelta():
+    def __init__(self, num_delta=2, **kargs):
+        super().__init__()
+        self.num_delta = num_delta
+        self.delta_func = torchaudio.transforms.ComputeDeltas(**kargs)
+    
+    def forward(self, x, join_dim = 0):
+        deltas = [x.copy()]
+        for i in range(self.num_delta):
+            x = self.delta_func(x)
+            deltas.append(x.copy())
+        return torch.cat(deltas, axis=join_dim)
+        
+
+
+class MultiScaleMFCC(MultiScaleMel):
+    def __init__(self, list_fft = [200, 400, 800, 1600], mode = "bicubic", **kargs):
+        super().__init__()
+        self.kargs = kargs
+        self.mode = mode
+        self.list_fft = sorted(list_fft)
+        self.list_module = []
+        for i in list_fft:
+            kargs["n_fft"] = i
+            self.list_module.append(torchaudio.transforms.MFCC(**kargs))
+
+
 if __name__ == "__main__":
     import librosa
     from matplotlib.pyplot import imsave
