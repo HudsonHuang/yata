@@ -31,8 +31,6 @@ class MultiScaleMel(nn.Module):
         return new_mel
 
 
-
-
 class SpectrogramDelta():
     def __init__(self, num_delta=2, **kargs):
         super().__init__()
@@ -49,7 +47,7 @@ class SpectrogramDelta():
 
 
 class MultiScaleMFCC(MultiScaleMel):
-    def __init__(self, list_fft = [200, 400, 800, 1600], mode = "bicubic", **kargs):
+    def __init__(self, sample_rate = 16000, list_fft = [200, 400, 800], mode = "bicubic", **kargs):
         super().__init__()
         self.kargs = kargs
         self.mode = mode
@@ -57,14 +55,15 @@ class MultiScaleMFCC(MultiScaleMel):
         self.list_module = []
         for i in list_fft:
             kargs["n_fft"] = i
-            self.list_module.append(torchaudio.transforms.MFCC(**kargs))
+            self.list_module.append(torchaudio.transforms.MFCC(sample_rate = sample_rate, melkwargs=kargs))
 
 
 if __name__ == "__main__":
     import librosa
     from matplotlib.pyplot import imsave
-    y, sr = librosa.load("61-70968-0002.wav", sr=None, mono = True)
-    msm = MultiScaleMel(sample_rate = sr)
+    y, sr = librosa.load("61-70968-0002.wav", sr=8000, mono = True, duration=2)
+    msm = MultiScaleMFCC(sample_rate = sr) # msm = MultiScaleMel(sample_rate = sr)
     result = msm.forward(torch.Tensor(y).unsqueeze(0))
     for i, n_frame in enumerate(list(result.squeeze().detach().numpy())):
+        print(n_frame.shape)
         imsave(f"{i}.png", n_frame)
