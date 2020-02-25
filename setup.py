@@ -2,19 +2,19 @@ from setuptools import setup, find_packages
 
 import imp
 
-version = imp.load_source('audiocity.version', 'audiocity/version.py')
-description='Adaptive pooling operators for multiple instance learning'
+version = imp.load_source('yata.version', 'yata/version.py')
+description='Yet Another Tools for Audio deep learning'
 
 with open('README.md') as file:
     long_description = file.read()
 
 setup(
-    name='audiocity',
+    name='yata',
     version=version.version,
     description=description,
     author='HudsonHuang',
     author_email='h.zy@mail.scut.edu.cn',
-    url='http://github.com/HudsonHuang/audiocity',
+    url='http://github.com/HudsonHuang/yata',
     packages=find_packages(),
     long_description=long_description,
     long_description_content_type='text/markdown',
