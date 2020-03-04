@@ -1,4 +1,5 @@
 import os
+import time
 
 def new_dir(*dirname):
     # Makedirs and return path.
@@ -15,3 +16,10 @@ def new_dir(*dirname):
     if not os.path.exists(dirname):
         os.makedirs(dirname)
     return dirname
+
+
+
+def get_current_date():
+    strDate = time.strftime('%Y%m%d_%H%M%S',
+                            time.localtime(time.time()))
+    return strDate
