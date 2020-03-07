@@ -49,6 +49,10 @@ def config_distortions(reverb_irfiles=None,
                        clip_factors=[], 
                        clip_p=-1,
                        chop_factors=[],
+                       flip_p=0.5,
+                       flip_axis=[0,1],
+                       floor_volume=0.5,
+                       volume_p=0.5,
                        #chop_factors=[(0.05, 0.025), (0.1, 0.05)], 
                        max_chops=5,
                        chop_p=0,
@@ -112,6 +116,18 @@ def config_distortions(reverb_irfiles=None,
                                 data_root=downsample_data_root,
                                 report=report))
         probs.append(downsample_p)
+
+    if volume_p > 0.:
+        trans.append(Volume(floor_volume=floor_volume,
+                            report=report))
+        probs.append(volume_p)
+
+    if flip_p > 0.:
+        trans.append(Flip(flip_axis=flip_axis,
+                             report=report))
+        probs.append(flip_p)
+
+
 
     if len(trans) > 0:
         return PCompose(trans, probs=probs, report=report)
@@ -802,6 +818,59 @@ class Chopper(object):
         attrs = '(chop_factors={}, max_chops={})'.format(
             self.chop_factors,
             self.max_chops
+        )
+        return self.__class__.__name__ + attrs
+
+class Flip(object):
+
+    def __init__(self, flip_axis=[0, 1],
+                 report=False):
+        self.flip_axis = flip_axis
+        self.report = report
+        self.random_axis = None
+
+    #@profile
+    def __call__(self, pkg):
+        pkg = format_package(pkg)
+        wav = pkg['chunk']
+        original_shape = wav.shape
+        wav = wav.flatten()
+        self.random_axis = random.choice(self.flip_axis)
+        if 0 == self.random_axis:
+            wav = wav * -1.0
+        elif 1 == self.random_axis:
+            wav = torch.flip(wav,[0])
+        else:
+            print("[Flip transform] Axis must be 0(y-axis) or 1(time).")
+            raise NotImplementedError
+        pkg['chunk'] = wav.reshape(original_shape)
+        return pkg
+
+    def __repr__(self):
+        attrs = '(flip_axis={})'.format(
+            self.random_axis
+        )
+        return self.__class__.__name__ + attrs
+
+
+class Volume(object):
+
+    def __init__(self, floor_volume=0.5,
+                 report=False):
+        self.floor_volume = floor_volume
+        self.report = report
+
+    #@profile
+    def __call__(self, pkg):
+        pkg = format_package(pkg)
+        wav = pkg['chunk']
+        scale = random.uniform(self.floor_volume, 1.0)
+        pkg['chunk'] = wav * scale
+        return pkg
+
+    def __repr__(self):
+        attrs = '(floor_volume={})'.format(
+            self.floor_volume
         )
         return self.__class__.__name__ + attrs
 
