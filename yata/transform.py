@@ -7,6 +7,7 @@ import subprocess
 import shlex
 import random
 import os
+import math
 import struct
 import glob
 import soundfile as sf
@@ -56,6 +57,8 @@ def config_distortions(reverb_irfiles=None,
                        #chop_factors=[(0.05, 0.025), (0.1, 0.05)], 
                        max_chops=5,
                        chop_p=0,
+                       augmix=True,
+                       augmix_rate=0.8,
                        codec2_p=0,
                        codec2_kbps=1600,
                        codec2_cachedir=None,
@@ -130,7 +133,7 @@ def config_distortions(reverb_irfiles=None,
 
 
     if len(trans) > 0:
-        return PCompose(trans, probs=probs, report=report)
+        return PCompose(trans, probs=probs, augmix=augmix, augmix_rate=augmix_rate, report=report)
     else:
         return None
 
@@ -171,11 +174,14 @@ class ToTensor(object):
 
 class PCompose(object):
 
-    def __init__(self, transforms, probs=0.4, report=False):
+    def __init__(self, transforms, probs=0.4, augmix=True, augmix_rate=0.8, augmix_maxlen=2, report=False):
         assert isinstance(transforms, list), type(transforms)
         self.transforms = transforms
         self.probs = probs
+        self.augmix = augmix
         self.report = report
+        self.augmix_rate = augmix_rate
+        self.augmix_maxlen = augmix_maxlen
         if isinstance(probs, list):
             assert len(transforms) == len(probs), \
                 '{} != {}'.format(len(transforms),
@@ -185,20 +191,35 @@ class PCompose(object):
     def __call__(self, tensor):
         x = tensor
         report = {}
-        for ti, transf in enumerate(self.transforms):
-            if isinstance(self.probs, list):
-                prob = self.probs[ti]
-            else:
-                prob = self.probs
-            if random.random() < prob:
-                x = transf(x)
-                if 'report' in x:
-                    # get the report
-                    report = x['report']
+        if self.augmix and len(self.transforms) > 1:
+            x_branches = torch.zeros_like(x['chunk'])
+            num_branch = math.ceil(len(self.transforms) / self.augmix_maxlen)
+            for i in range(num_branch):
+                start = i*self.augmix_maxlen
+                end = (i+1)*self.augmix_maxlen
+                x_branch, report_branch = self.apply_branch(x, self.transforms[start: end], self.probs[start: end])
+                x_branches += x_branch['chunk']
+                report.update(report_branch)
+            x_branches = x_branches/num_branch
+            x_augmix = x['chunk'] * self.augmix_rate + x_branches * (1-self.augmix_rate)
+            x['chunk'] = x_augmix
+
+        else:
+            x, report = self.apply_branch(x, self.transforms, self.probs)
         if self.report:
             return x, report
         else:
             return x
+
+    def apply_branch(self, x, transforms, probs):
+        report = {}
+        for trans, prob in zip(transforms, probs):
+            if random.random() < prob:
+                x = trans(x)
+                if 'report' in x:
+                    # get the report
+                    report = x['report']
+        return x, report
 
     def __repr__(self):
         format_string = self.__class__.__name__ + '('
@@ -1545,8 +1566,8 @@ if __name__ == '__main__':
     dist = config_distortions(**dtr)
     # codec = Reverb(ir_fi)
     wav, size = sf.read('test_16k.wav')
+    # buffer_c2 = dist({'chunk':torch.tensor(wav)})['chunk']
+    # for n in range(3):
     buffer_c2 = dist({'chunk':torch.tensor(wav)})['chunk']
-    for n in range(3):
-        buffer_c2 = dist({'chunk':torch.tensor(buffer_c2)})['chunk']
         # buffer_c2 = codec({'chunk':torch.tensor(wav)})['chunk']
     sf.write('5134426_distortions.wav', buffer_c2, 16000)
