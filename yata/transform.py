@@ -191,15 +191,23 @@ class PCompose(object):
     def __call__(self, tensor):
         x = tensor
         report = {}
-        if self.augmix and len(self.transforms) > 1:
+        if self.augmix:
+            # shuffle pipeline on every call
+            c = list(zip(self.transforms, self.probs))
+            random.shuffle(c)
+            self.transforms, self.probs = zip(*c)
+            self.transforms, self.probs = list(self.transforms), list(self.probs)
             x_branches = torch.zeros_like(x['chunk'])
             num_branch = math.ceil(len(self.transforms) / self.augmix_maxlen)
+            # apply augmix_maxlen transform to every branch
             for i in range(num_branch):
                 start = i*self.augmix_maxlen
                 end = (i+1)*self.augmix_maxlen
                 x_branch, report_branch = self.apply_branch(x, self.transforms[start: end], self.probs[start: end])
                 x_branches += x_branch['chunk']
                 report.update(report_branch)
+
+            # merge result and original x with mixup style
             x_branches = x_branches/num_branch
             x_augmix = x['chunk'] * self.augmix_rate + x_branches * (1-self.augmix_rate)
             x['chunk'] = x_augmix
@@ -213,6 +221,8 @@ class PCompose(object):
 
     def apply_branch(self, x, transforms, probs):
         report = {}
+        if not isinstance(probs, list):
+            probs = [probs]
         for trans, prob in zip(transforms, probs):
             if random.random() < prob:
                 x = trans(x)
@@ -1570,4 +1580,4 @@ if __name__ == '__main__':
     # for n in range(3):
     buffer_c2 = dist({'chunk':torch.tensor(wav)})['chunk']
         # buffer_c2 = codec({'chunk':torch.tensor(wav)})['chunk']
-    sf.write('5134426_distortions.wav', buffer_c2, 16000)
+    sf.write('5134426_distortions3.wav', buffer_c2, 16000)
