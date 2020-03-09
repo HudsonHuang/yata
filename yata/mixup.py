@@ -2,7 +2,7 @@ import torch
 import numpy as np
 
 
-def mixup_data(x, y, alpha=1.0, use_cuda=True):
+def mixup_data(x, y, alpha=0.2, use_cuda=True):
     '''Returns mixed inputs, pairs of targets, and lambda'''
     if alpha > 0:
         lam = np.random.beta(alpha, alpha)
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     from convnet import ConvNet
     from torch.autograd import Variable
 
-    alpha = 0.1
+    alpha = 0.2
     data_dir = "./tmp"
     # data
     train_loader = torch.utils.data.DataLoader(
