@@ -1,5 +1,25 @@
 import os
 import time
+import json
+
+class HParam(object):
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+        self.keys = kwargs.keys()
+
+    def to_dict(self):
+        dic = {}
+        for key in self.keys:
+            value = self.__getattribute__(key)
+            dic[key] = value
+        return dic
+
+    def to_json(self):
+        string = json.dumps(self.to_dict(),indent=2)
+        return string
+
 
 def new_dir(*dirname):
     # Makedirs and return path.
