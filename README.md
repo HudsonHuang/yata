@@ -16,10 +16,10 @@ import yata
   - PASE: [paper](https://arxiv.org/abs/2001.09239) [code](https://github.com/santi-pdp/pase)
   - Multi scale MelSpectrogram
 - Tensorflow alternatives
-    - yata.utils.HParam:   
+    - yata.utils.HParams:   
       An alternative to tf.contrib.training.HParams without Tensorflow dependency
     - yata.utils.to_categorical:   
-      An alternative to tf.keras.utils.to_categorical without Tensorflow dependency
+      An alternative to tf.keras.utils.to_categorical without Tensorflow & keras dependency
 - handy tools
     - yata.utils.new_dir:   
         Make directory like this `./file_a/tag/1/` with:

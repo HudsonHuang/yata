@@ -5,7 +5,7 @@ import numpy as np
 
 
 
-class HParam(object):
+class HParams(object):
     """
     an alternative to 
     tf.contrib.training.HParams
