@@ -9,12 +9,12 @@ with open('README.md') as file:
     long_description = file.read()
 
 setup(
-    name='yata',
+    name='libyata',
     version=version.version,
     description=description,
     author='HudsonHuang',
     author_email='790209714@qq.com',
-    url='http://github.com/HudsonHuang/libyata',
+    url='http://github.com/HudsonHuang/yata',
     packages=find_packages(),
     long_description=long_description,
     long_description_content_type='text/markdown',
