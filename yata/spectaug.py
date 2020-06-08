@@ -6,6 +6,7 @@ from specAugment.spec_augment_pytorch import spec_augment
 
 
 
+# Borrowed from: https://github.com/DemisEom/SpecAugment
 if __name__ == "__main__":
     # Get example mel
     audio, sampling_rate = librosa.load(librosa.util.example_audio_file(), duration = 4, sr = 8000, mono= True)
