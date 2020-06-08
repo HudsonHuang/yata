@@ -14,7 +14,7 @@ setup(
     description=description,
     author='HudsonHuang',
     author_email='790209714@qq.com',
-    url='http://github.com/HudsonHuang/yata',
+    url='http://github.com/HudsonHuang/libyata',
     packages=find_packages(),
     long_description=long_description,
     long_description_content_type='text/markdown',
