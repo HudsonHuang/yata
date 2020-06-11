@@ -100,5 +100,8 @@ def to_categorical(y, num_classes=None, dtype='float32'):
     return categorical
 
 def batch_clean(data, split=","):
-    return list(map(lambda x:x.replace("\n", "").split(split), data))
+    if type(split) == str:
+        return list(map(lambda x:x.replace("\n", "").split(split), data))
+    else:
+        return list(map(lambda x:x.replace("\n", ""), data))
     
