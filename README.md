@@ -26,6 +26,8 @@ import yata
         ```
         new_dir("file_a", "tag", 1)
         ```
+    - yata.utils.backup_code:  
+        Backup all your \*.py(optional) to a zip file, eg. backup code for every experiments before running.
     - yata.utils.get_current_date: Get date as string
     
 
