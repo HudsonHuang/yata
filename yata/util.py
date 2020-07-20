@@ -104,4 +104,7 @@ def batch_clean(data, split=","):
         return list(map(lambda x:x.replace("\n", "").split(split), data))
     else:
         return list(map(lambda x:x.replace("\n", ""), data))
-    
+   
+def backup_code(save_dir="./", pattern="*.py"):
+    zip_bak = os.path.join(save_dir, f"code_backup_{util.get_current_date()}.zip")
+    os.system(f"zip -R {zip_bak} '{pattern}'")
