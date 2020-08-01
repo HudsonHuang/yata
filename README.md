@@ -10,8 +10,10 @@ import yata
 ```
 
 - data augmentation
-  - mixup: [paper](https://arxiv.org/abs/1710.09412) [code](https://github.com/hongyi-zhang/mixup)
-  - SpecAugment: [paper](https://arxiv.org/abs/1904.08779) [code](https://github.com/DemisEom/SpecAugment)
+  - [x] mixup: [paper](https://arxiv.org/abs/1710.09412) [code](https://github.com/hongyi-zhang/mixup)
+  - [x] SpecAugment: [paper](https://arxiv.org/abs/1904.08779) [code](https://github.com/DemisEom/SpecAugment)
+  - [ ] mp3 as augumentation，用MP3编码后去掉的不可听噪声，把这种生成不可听噪声作为数据增强的手段（做法：加高斯，把MP3当成一个mask去编码，把MP3mask挖掉的区域的高斯留下来加到频谱上面，形成不可听噪声）
+  - [ ] phase putertubation
 - feature extraction
   - PASE: [paper](https://arxiv.org/abs/2001.09239) [code](https://github.com/santi-pdp/pase)
   - Multi scale MelSpectrogram
