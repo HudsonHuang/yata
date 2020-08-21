@@ -2,6 +2,7 @@ import os
 import time
 import json
 import numpy as np
+from pathlib import Path
 
 
 
@@ -44,7 +45,7 @@ def new_dir(*dirname):
     dirname = os.path.abspath(dirname)
     if not os.path.exists(dirname):
         os.makedirs(dirname)
-    return dirname
+    return Path(dirname)
 
 
 
