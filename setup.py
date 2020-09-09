@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, parse_requirements
 
 import imp
 
@@ -24,8 +24,6 @@ setup(
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "Topic :: Multimedia :: Sound/Audio :: Analysis",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
@@ -34,6 +32,5 @@ setup(
     ],
     keywords='deep learning, audio processing, machine learning',
     license='MIT',
-    install_requires=[
-    ]
+    install_requires=parse_requirements('requirements.txt', session='hack')
 )
