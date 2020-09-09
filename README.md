@@ -23,6 +23,24 @@ import yata
     - yata.utils.to_categorical:   
       An alternative to tf.keras.utils.to_categorical without Tensorflow & keras dependency
 - handy tools
+    - yata.utils.run():  
+      No more ArgumentParser!!   
+      you can pass and update any parameter with:
+      ```
+      python test.py --a 2 --lr 0.01
+      ```
+      with code like:
+      ```
+      default_hp = {"a":1,"b":2}
+      args = fyata.run(default_hp)
+      print(args.a) # default_hp
+      print(args.lr) # newly add from CLI
+      ```
+      you got:
+      ```
+      2
+      0.01
+      ```
     - yata.utils.new_dir:   
         Make directory like this `./file_a/tag/1/` with:
         ```
