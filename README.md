@@ -35,13 +35,11 @@ import yata
       
       default_hp = {"a":1,"b":2}
       args = yata.util.run(default_hp)
+      ```
+      you can acess params like HParams:
+      ```
       print(args.a, args.b) # acess default params
       print(args.lr) # acess newly add params from CLI
-      ```
-      you got:
-      ```
-      2 2
-      0.01
       ```
     - yata.utils.new_dir:   
         Make directory like this `./file_a/tag/1/` with:
