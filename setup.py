@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages, parse_requirements
+from setuptools import setup, find_packages
 
 import imp
 
@@ -7,6 +7,10 @@ description='Yet Another Tools for Audio deep learning'
 
 with open('README.md') as file:
     long_description = file.read()
+
+def _requires_from_file(filename):
+    return open(filename).read().splitlines()
+
 
 setup(
     name='libyata',
@@ -32,5 +36,5 @@ setup(
     ],
     keywords='deep learning, audio processing, machine learning',
     license='MIT',
-    install_requires=parse_requirements('requirements.txt', session='hack')
+    install_requires=_requires_from_file('requirements.txt')
 )

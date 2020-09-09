@@ -43,10 +43,10 @@ class HParams(object):
 
 def run(default_dict=None):
     if default_dict == None:
-        return fire.Fire(yata.util.HParams)
+        return fire.Fire(HParams)
     
-    def_hp = yata.util.HParams(**default_dict)
-    args_hp = fire.Fire(yata.util.HParams)
+    def_hp = HParams(**default_dict)
+    args_hp = fire.Fire(HParams)
     def_hp.update_from_hp(args_hp)
     return def_hp
 
