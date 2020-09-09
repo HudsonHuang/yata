@@ -3,8 +3,7 @@ import time
 import json
 import numpy as np
 from pathlib import Path
-
-
+import fire
 
 class HParams(object):
     """
@@ -17,7 +16,7 @@ class HParams(object):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-        self.keys = kwargs.keys()
+        self.keys = list(kwargs.keys())
 
     def to_dict(self):
         dic = {}
@@ -29,6 +28,27 @@ class HParams(object):
     def to_json(self):
         string = json.dumps(self.to_dict(),indent=2)
         return string
+
+    def update(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+        self.keys += kwargs.keys
+
+    def update_from_hp(self, hp):
+        for key in hp.keys:
+            value = hp.__getattribute__(key)
+            setattr(self, key, value)
+        self.keys += hp.keys
+
+
+def run(default_dict=None):
+    if default_dict == None:
+        return fire.Fire(yata.util.HParams)
+    
+    def_hp = yata.util.HParams(**default_dict)
+    args_hp = fire.Fire(yata.util.HParams)
+    def_hp.update_from_hp(args_hp)
+    return def_hp
 
 
 def new_dir(*dirname):
