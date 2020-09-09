@@ -31,14 +31,16 @@ import yata
       ```
       with code like:
       ```
+      import yata
+      
       default_hp = {"a":1,"b":2}
-      args = fyata.run(default_hp)
-      print(args.a) # default_hp
-      print(args.lr) # newly add from CLI
+      args = yata.util.run(default_hp)
+      print(args.a, args.b) # acess default params
+      print(args.lr) # acess newly add params from CLI
       ```
       you got:
       ```
-      2
+      2 2
       0.01
       ```
     - yata.utils.new_dir:   
